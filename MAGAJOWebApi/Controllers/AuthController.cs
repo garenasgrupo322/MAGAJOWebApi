@@ -22,7 +22,7 @@ namespace MAGAJOWebApi.Controllers
 
 
         [HttpPost]
-        [Route("action")]
+        [Route("[action]")]
         public ActionResult GetId([FromForm]string path)
         {
             return Ok(new { 
