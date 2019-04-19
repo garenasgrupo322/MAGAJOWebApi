@@ -53,10 +53,13 @@ namespace MAGAJOWebApi.Utils
             }
             catch (SqlException ex)
             {
+                Debug.Write(@"Error - " + ex.Message);
                 throw new Exception(ex.Message);
+
             }
             catch (Exception ex)
             {
+                Debug.Write(@"Error - " + ex.Message);
                 throw new Exception(ex.Message);
             }
             finally

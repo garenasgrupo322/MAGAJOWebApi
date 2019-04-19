@@ -5,12 +5,14 @@ using MAGAJOWebApi.Models;
 using MAGAJOWebApi.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Cors;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace MAGAJOWebApi.Controllers
 {
     [Route("api/[controller]")]
+    [EnableCors("AllowOrigin")]
     public class AuthController : Controller
     {
         public IConfiguration _configuration { get; }
@@ -26,13 +28,13 @@ namespace MAGAJOWebApi.Controllers
         public ActionResult GetId([FromForm]string path)
         {
             return Ok(new { 
-                id = "ERPZANTELOGIN0000000000000000000000000000000000002"
+                id = "ERPZANTE"
             });
         }
 
         [HttpGet]   
-        [Route("ViewLogin")]
-        public ActionResult Get()
+        [Route("ViewLogin/{id}")]
+        public ActionResult Get(string id)
         {
             string json = string.Empty;
             List<Parameters> parameters = new List<Parameters>();
@@ -49,7 +51,7 @@ namespace MAGAJOWebApi.Controllers
             parameter.Name = "@MGJAPP_ID";
             parameter.Direction = ParameterDirection.Input;
             parameter.Type = SqlDbType.Char;
-            parameter.Value = string.Empty;
+            parameter.Value = id;
             parameter.Size = 10;
             parameters.Add(parameter);
 
@@ -73,6 +75,7 @@ namespace MAGAJOWebApi.Controllers
 
         public class loginPost
         {
+            public string appId { get; set; }
             public string userName { get; set; }
             public string userPassword { get; set; }
         }
@@ -87,7 +90,7 @@ namespace MAGAJOWebApi.Controllers
             Parameters parameter = new Parameters();
             parameter.Name = "@I_TOKEN";
             parameter.Direction = ParameterDirection.InputOutput;
-            parameter.Type = SqlDbType.NVarChar;
+            parameter.Type = SqlDbType.VarChar;
             parameter.Value = string.Empty;
             parameter.Size = -1;
             parameters.Add(parameter);
@@ -95,16 +98,24 @@ namespace MAGAJOWebApi.Controllers
             parameter = new Parameters();
             parameter.Name = "@I_USERNAME";
             parameter.Direction = ParameterDirection.Input;
-            parameter.Type = SqlDbType.Char;
-            parameter.Value = string.Empty;
+            parameter.Type = SqlDbType.VarChar;
+            parameter.Value = loginPost.userName;
             parameter.Size = 20;
             parameters.Add(parameter);
 
             parameter = new Parameters();
             parameter.Name = "@I_PASSWORD";
             parameter.Direction = ParameterDirection.Input;
-            parameter.Type = SqlDbType.Char;
-            parameter.Value = string.Empty;
+            parameter.Type = SqlDbType.VarChar;
+            parameter.Value = loginPost.userPassword;
+            parameter.Size = 20;
+            parameters.Add(parameter);
+
+            parameter = new Parameters();
+            parameter.Name = "@MGJAPP_ID";
+            parameter.Direction = ParameterDirection.Input;
+            parameter.Type = SqlDbType.VarChar;
+            parameter.Value = loginPost.appId;
             parameter.Size = 20;
             parameters.Add(parameter);
 
@@ -123,7 +134,10 @@ namespace MAGAJOWebApi.Controllers
                 });
             }
 
-            return Ok(json);
+            return Ok(new {
+                success = true,
+                token = json
+            });
         }
     }
 }
