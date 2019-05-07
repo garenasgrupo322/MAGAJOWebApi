@@ -332,3 +332,8 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+.vscode/launch.json
+.vscode/tasks.json
+.DS_Store
+.DS_Store
+.DS_Store
