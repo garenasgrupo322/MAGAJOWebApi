@@ -44,84 +44,30 @@ namespace MAGAJOWebApi.Controllers {
             public string operador { get; set; }
         }
 
+        public class filtrosInsumo {
+            public List<filtro> filtros { get; set; }
+        }
+
+        public class filtro
+        {
+            public string valor { get; set; }
+        }
+
         [HttpPost]
         [Route("ObtieneExplosionDatos")]
-        public ActionResult Post([FromBody] string filtro)
+        public ActionResult Post([FromBody] filtrosInsumo filtros)
         {
             string json = string.Empty;
             List<Parameters> parameters = new List<Parameters>();
 
             Parameters parameter = new Parameters();
-            parameter.Name = "@IEntityID";
+            parameter.Name = "@FILTER";
             parameter.Direction = ParameterDirection.Input;
             parameter.Type = SqlDbType.VarChar;
-            parameter.Value = parametros.IEntityID; 
+            var jsonFilter = JsonConvert.SerializeObject(filtros.filtros);
+            parameter.Value = jsonFilter;
             parameter.Size = -1;
             parameters.Add(parameter);
-
-            parameter = new Parameters();
-            parameter.Name = "@Itoken";
-            parameter.Direction = ParameterDirection.Input;
-            parameter.Type = SqlDbType.VarChar;
-            parameter.Value = parametros.Itoken;
-            parameter.Size = -1;
-            parameters.Add(parameter);
-
-            parameter = new Parameters();
-            parameter.Name = "@FilterData";
-            parameter.Direction = ParameterDirection.Input;
-            parameter.Type = SqlDbType.VarChar;
-            if (parametros.FilterData != null)
-            {
-                var jsonFilter = JsonConvert.SerializeObject(parametros.FilterData);
-                parameter.Value = jsonFilter;
-            }
-            else {
-                parameter.Value = DBNull.Value;
-            }
-            parameter.Size = -1;
-            parameters.Add(parameter);
-
-            parameter = new Parameters();
-            parameter.Name = "@SortData";
-            parameter.Direction = ParameterDirection.Input;
-            parameter.Type = SqlDbType.VarChar;
-            if (!string.IsNullOrEmpty(parametros.SortData))
-                parameter.Value = parametros.SortData;
-            else
-                parameter.Value = DBNull.Value;
-            parameter.Size = -1;
-            parameters.Add(parameter);
-
-            parameter = new Parameters();
-            parameter.Name = "@QueryLimits";
-            parameter.Direction = ParameterDirection.Input;
-            parameter.Type = SqlDbType.VarChar;
-            if (!string.IsNullOrEmpty(parametros.QueryLimits))
-                parameter.Value = parametros.QueryLimits;
-            else
-                parameter.Value = DBNull.Value;
-            parameter.Size = -1;
-            parameters.Add(parameter);
-
-            parameter = new Parameters();
-            parameter.Name = "@ColumnData";
-            parameter.Direction = ParameterDirection.Input;
-            parameter.Type = SqlDbType.VarChar;
-            if (!string.IsNullOrEmpty(parametros.ColumnData))
-                parameter.Value = parametros.ColumnData;
-            else
-                parameter.Value = DBNull.Value;
-            parameter.Size = -1;
-            parameters.Add(parameter);
-
-            /*parameter = new Parameters();
-            parameter.Name = "@MGJAPP_ID";
-            parameter.Direction = ParameterDirection.Input;
-            parameter.Type = SqlDbType.Char;
-            parameter.Value = parametros.MGJAPP_ID;
-            parameter.Size = 10;
-            parameters.Add(parameter);*/
 
             parameter = new Parameters();
             parameter.Name = "@IDataOutput";
@@ -135,7 +81,7 @@ namespace MAGAJOWebApi.Controllers {
 
             try
             {
-                json = utilities.callSP("MGJENT_GET_ENTITY_DATA", parameters, "@IDataOutput");
+                json = utilities.callSP("GET_EXPLOSION_INSUMOS", parameters, "@IDataOutput");
             } 
             catch (Exception ex)
             {
@@ -292,6 +238,51 @@ namespace MAGAJOWebApi.Controllers {
             {
                 json = utilities.callSP("MGJENT_GET_ENTITY_MODEL", parameters, "@IDataOutput");
             } 
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+
+            return Ok(json);
+        }
+
+        public class requi {
+            public string parametros { get; set; }
+        }
+
+        [HttpPost]
+        [Route("SetRequi")]
+        public ActionResult SetReqiPost([FromBody] requi parm)
+        {
+            string json = string.Empty;
+            List<Parameters> parameters = new List<Parameters>();
+
+            Parameters parameter = new Parameters();
+            parameter.Name = "@JSONREQUI";
+            parameter.Direction = ParameterDirection.Input;
+            parameter.Type = SqlDbType.VarChar;
+            parameter.Value = parm.parametros;
+            parameter.Size = -1;
+            parameters.Add(parameter);
+
+            parameter = new Parameters();
+            parameter.Name = "@IDataOutput";
+            parameter.Direction = ParameterDirection.InputOutput;
+            parameter.Type = SqlDbType.VarChar;
+            parameter.Value = string.Empty;
+            parameter.Size = -1;
+            parameters.Add(parameter);
+
+            Utilities utilities = new Utilities(_configuration);
+
+            try
+            {
+                json = utilities.callSP("SET_DATA_REQUISICION", parameters, "@IDataOutput");
+            }
             catch (Exception ex)
             {
                 return BadRequest(new
