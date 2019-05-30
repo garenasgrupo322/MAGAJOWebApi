@@ -282,10 +282,10 @@ namespace MAGAJOWebApi.Controllers {
             try
             {
                 json = utilities.callSP("SET_DATA_REQUISICION", parameters, "@IDataOutput");
-            }
+                }
             catch (Exception ex)
             {
-                return BadRequest(new
+                return Ok(new
                 {
                     success = false,
                     message = ex.Message
