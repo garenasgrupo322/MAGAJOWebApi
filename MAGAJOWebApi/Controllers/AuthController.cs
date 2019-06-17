@@ -22,14 +22,91 @@ namespace MAGAJOWebApi.Controllers
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// Obtiene el identificador del proyecto
+        /// </summary>
+        /// <param name="sNameApp">Nombre del proyecto (URL)</param>
+        /// <returns>JsonResult</returns>
+        [HttpGet("{sNameApp}")]
+        public ActionResult Get(string sNameApp)
+        {
+            string json = string.Empty;
+            List<Parameters> parameters = new List<Parameters>();
 
-        [HttpPost]
+            Parameters parameter = new Parameters();
+            parameter.Name = "@jsonOutput";
+            parameter.Direction = ParameterDirection.InputOutput;
+            parameter.Type = SqlDbType.NVarChar;
+            parameter.Value = string.Empty;
+            parameter.Size = -1;
+            parameters.Add(parameter);
+
+            parameter = new Parameters();
+            parameter.Name = "@MGJAPP_ID";
+            parameter.Direction = ParameterDirection.Input;
+            parameter.Type = SqlDbType.Char;
+            parameter.Value = sNameApp;
+            parameter.Size = 10;
+            parameters.Add(parameter);
+
+            Utilities utilities = new Utilities(_configuration);
+
+            try
+            {
+                json = utilities.callSP("MGJSEC_GET_APP", parameters, "@jsonOutput");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+
+            return Ok(json);
+        }
+
+
+        /*[HttpPost]
         [Route("[action]")]
         public ActionResult GetId([FromForm]string path)
         {
-            return Ok(new { 
-                id = "ERPZANTE"
-            });
+            string json = string.Empty;
+            List<Parameters> parameters = new List<Parameters>();
+
+            Parameters parameter = new Parameters();
+            parameter.Name = "@jsonOutput";
+            parameter.Direction = ParameterDirection.InputOutput;
+            parameter.Type = SqlDbType.NVarChar;
+            parameter.Value = string.Empty;
+            parameter.Size = -1;
+            parameters.Add(parameter);
+
+            parameter = new Parameters();
+            parameter.Name = "@MGJAPP_ID";
+            parameter.Direction = ParameterDirection.Input;
+            parameter.Type = SqlDbType.Char;
+            parameter.Value = path;
+            parameter.Size = 10;
+            parameters.Add(parameter);
+
+            Utilities utilities = new Utilities(_configuration);
+
+            try
+            {
+                json = utilities.callSP("MGJSEC_GET_APP", parameters, "@jsonOutput");
+            } 
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+
+            return Ok(json);
         }
 
         [HttpGet]   
@@ -138,6 +215,6 @@ namespace MAGAJOWebApi.Controllers
                 success = true,
                 token = json
             });
-        }
+        }*/
     }
 }

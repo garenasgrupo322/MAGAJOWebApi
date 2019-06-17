@@ -29,6 +29,7 @@ namespace MAGAJOWebApi.Controllers {
         public ActionResult Post(string IEntityID, [FromBody] object parm)
         {
 
+            string json = string.Empty;
             string jsonPost = JsonConvert.SerializeObject(parm);
             List<Parameters> parameters = new List<Parameters>();
 
@@ -61,7 +62,7 @@ namespace MAGAJOWebApi.Controllers {
             try
             {
                 json = utilities.callSP("SET_DATA_REQUISICION", parameters, "@IDataOutput");
-                }
+            }
             catch (Exception ex)
             {
                 return Ok(new
