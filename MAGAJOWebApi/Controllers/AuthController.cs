@@ -42,11 +42,11 @@ namespace MAGAJOWebApi.Controllers
             parameters.Add(parameter);
 
             parameter = new Parameters();
-            parameter.Name = "@MGJAPP_ID";
+            parameter.Name = "@PATH";
             parameter.Direction = ParameterDirection.Input;
             parameter.Type = SqlDbType.Char;
             parameter.Value = sNameApp;
-            parameter.Size = 10;
+            parameter.Size = 50;
             parameters.Add(parameter);
 
             Utilities utilities = new Utilities(_configuration);
@@ -57,7 +57,7 @@ namespace MAGAJOWebApi.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new
+                return Ok(new
                 {
                     success = false,
                     message = ex.Message

@@ -25,15 +25,25 @@ namespace MAGAJOWebApi.Controllers {
         }
 
         [HttpPost]
-        [Route("{IEntityID}")]
-        public ActionResult Post(string IEntityID, [FromBody] object parm)
+        [Route("{IAppID}/{IEntityID}")]
+        public ActionResult Post(string IAppID, string IEntityID, [FromBody] object parm)
         {
 
             string json = string.Empty;
             string jsonPost = JsonConvert.SerializeObject(parm);
+            jsonPost = jsonPost.Replace("-inputEl", string.Empty);
             List<Parameters> parameters = new List<Parameters>();
 
             Parameters parameter = new Parameters();
+            parameter.Name = "@IAppID";
+            parameter.Direction = ParameterDirection.Input;
+            parameter.Type = SqlDbType.VarChar;
+            parameter.Value = IAppID;
+            parameter.Size = -1;
+            parameters.Add(parameter);
+
+
+            parameter = new Parameters();
             parameter.Name = "@IEntityID";
             parameter.Direction = ParameterDirection.Input;
             parameter.Type = SqlDbType.VarChar;
@@ -42,7 +52,7 @@ namespace MAGAJOWebApi.Controllers {
             parameters.Add(parameter);
 
             parameter = new Parameters();
-            parameter.Name = "@JSONREQUI";
+            parameter.Name = "@OJsonPost";
             parameter.Direction = ParameterDirection.Input;
             parameter.Type = SqlDbType.VarChar;
             parameter.Value = jsonPost;
@@ -61,7 +71,7 @@ namespace MAGAJOWebApi.Controllers {
 
             try
             {
-                json = utilities.callSP("SET_DATA_REQUISICION", parameters, "@IDataOutput");
+                json = utilities.callSP("MGJENT_SAVE_DATA", parameters, "@IDataOutput");
             }
             catch (Exception ex)
             {
